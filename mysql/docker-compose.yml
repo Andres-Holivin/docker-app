@@ -1,0 +1,19 @@
+version: '3'
+services:
+
+  mariadb:
+    image: tobi312/rpi-mariadb:10.6-alpine
+    container_name: mariadb
+    restart: unless-stopped
+    command: --max_allowed_packet=1073741824
+    volumes:
+      - ./mariadb-data:/var/lib/mysql:rw
+    environment:
+      TZ: Europe/Berlin
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: db
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: admin
+    ports:
+      - 3306:3306
+      
