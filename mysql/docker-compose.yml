@@ -9,7 +9,6 @@ services:
     volumes:
       - ./mariadb-data:/var/lib/mysql:rw
     environment:
-      TZ: Europe/Berlin
       MARIADB_ROOT_PASSWORD: root
       MARIADB_DATABASE: db
       MARIADB_USER: admin
