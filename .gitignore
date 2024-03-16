@@ -2,3 +2,4 @@ homepage/config/
 homepage/homarr/
 
 mysql/mariadb-data
+postgres/db
