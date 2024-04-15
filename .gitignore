@@ -3,3 +3,14 @@ homepage/homarr/
 
 mysql/mariadb-data
 postgres/db
+
+nextcloud/config
+nextcloud/custom_apps
+nextcloud/data
+nextcloud/html
+nextcloud/nextclouddb
+nextcloud/redis
+
+proxy-manager/data
+proxy-manager/letsencrypt
+proxy-manager/mysql

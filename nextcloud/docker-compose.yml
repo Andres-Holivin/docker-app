@@ -1,0 +1,80 @@
+---
+version: '3'
+
+services:
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    restart: always
+    networks: 
+      - cloud
+    depends_on:
+      - nextclouddb
+      - redis
+    ports:
+      - 8081:80
+    volumes:
+      - ./html:/var/www/html
+      - ./custom_apps:/var/www/html/custom_apps
+      - ./config:/var/www/html/config
+      - ./data:/var/www/html/data
+      - /media/pi/HDD750:/media/hdd
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - PHP_MEMORY_LIMIT=4096M
+      - PHP_UPLOAD_LIMIT=4096M
+      - TZ=Asia/Jakarta
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=dbpassword
+      - MYSQL_HOST=nextclouddb
+      - REDIS_HOST=redis
+      - NEXTCLOUD_TRUSTED_DOMAINS=pi.lobster-codlet.ts.net:8081,192.168.1.10:8081
+
+  nextclouddb:
+    image: mariadb
+    container_name: nextcloud-db
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    networks: 
+      - cloud
+    volumes:
+      - ./nextclouddb:/var/lib/mysql
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Jakarta
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MYSQL_PASSWORD=dbpassword
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      
+  collabora:
+    image: collabora/code
+    container_name: collabora
+    restart: always
+    networks: 
+      - cloud
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Jakarta
+      - password=password
+      - username=nextcloud
+      - domain=example.com
+      - extra_params=--o:ssl.enable=true
+    ports:
+      - 9980:9980
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    volumes:
+      - ./redis:/data  
+    networks: 
+      - cloud
+networks:
+  cloud:
+    driver: bridge
