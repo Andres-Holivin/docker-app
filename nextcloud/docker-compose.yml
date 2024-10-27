@@ -6,6 +6,7 @@ services:
     image: nextcloud
     container_name: nextcloud
     restart: always
+    user: root
     networks: 
       - cloud
     depends_on:
@@ -15,7 +16,7 @@ services:
       - 8081:80
     volumes:
       - ./html:/var/www/html
-      - /home/pi/storage/hdd:/media/hdd
+      - /home/pi/storage/hdd:/media/hdd:rw
     environment:
       - PUID=1000
       - PGID=1000
@@ -27,11 +28,13 @@ services:
       - MYSQL_PASSWORD=dbpassword
       - MYSQL_HOST=nextclouddb
       - REDIS_HOST=redis
+      - NEXTCLOUD_TRUSTED_DOMAINS=pi.local:9443
 
   nextclouddb:
     image: mariadb
     container_name: nextcloud-db
     restart: always
+    user: root
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     networks: 
       - cloud
@@ -55,7 +58,7 @@ services:
     networks: 
       - cloud
     depends_on:
-      - db
+      - nextclouddb
       - redis
 
   redis:

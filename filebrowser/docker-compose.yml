@@ -1,0 +1,11 @@
+services:
+  filebrowser:
+    image: filebrowser/filebrowser
+    user: root
+    ports:
+      - 8080:80
+    volumes:
+      - /home/pi/storage/srv:/srv
+      - ./data/database.db:/database.db
+      - ./config/filebrowser.json:/.filebrowser.json
+    restart: always
