@@ -15,10 +15,7 @@ services:
       - 8081:80
     volumes:
       - ./html:/var/www/html
-      - ./custom_apps:/var/www/html/custom_apps
-      - ./config:/var/www/html/config
-      - ./data:/var/www/html/data
-      - /media/pi/HDD750:/media/hdd
+      - /home/pi/storage/hdd:/media/hdd
     environment:
       - PUID=1000
       - PGID=1000
@@ -30,7 +27,6 @@ services:
       - MYSQL_PASSWORD=dbpassword
       - MYSQL_HOST=nextclouddb
       - REDIS_HOST=redis
-      - NEXTCLOUD_TRUSTED_DOMAINS=pi.lobster-codlet.ts.net:8081,192.168.1.10:8081
 
   nextclouddb:
     image: mariadb
@@ -49,23 +45,18 @@ services:
       - MYSQL_PASSWORD=dbpassword
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      
-  collabora:
-    image: collabora/code
-    container_name: collabora
+
+  cron:
+    image: nextcloud:apache
     restart: always
+    volumes:
+      - ./html:/var/www/html:z
+    entrypoint: /cron.sh
     networks: 
       - cloud
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Asia/Jakarta
-      - password=password
-      - username=nextcloud
-      - domain=example.com
-      - extra_params=--o:ssl.enable=true
-    ports:
-      - 9980:9980
+    depends_on:
+      - db
+      - redis
 
   redis:
     image: redis:alpine
